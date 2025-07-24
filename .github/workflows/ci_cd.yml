@@ -1,3 +1,5 @@
+# .github/workflows/votre_workflow.yml
+
 name: CI/CD Pipeline
 
 on:
@@ -26,8 +28,8 @@ jobs:
       - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
-
+          pip install -r api/requirements.txt # <--- MODIFICATION ICI
+      
       - name: Install API specific requirements (if different from global)
         continue-on-error: true
         run: echo "No separate API requirements specified"

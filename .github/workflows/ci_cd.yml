@@ -1,4 +1,4 @@
-# .github/workflows/votre_workflow.yml
+# .github/workflows/ci-cd-pipeline.yml
 
 name: CI/CD Pipeline
 
@@ -28,20 +28,25 @@ jobs:
       - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r api/requirements.txt # <--- MODIFICATION ICI
-      
-      - name: Install API specific requirements (if different from global)
-        continue-on-error: true
-        run: echo "No separate API requirements specified"
+          pip install -r api/requirements.txt # Assurez-vous que api/requirements.txt est correct
 
       - name: Run Python tests
         run: |
           pip install pytest
-          pytest
+          pytest tests/ # Exécute pytest en ciblant le dossier tests/ pour s'assurer qu'il trouve les tests
 
-      - name: Build and Lint API Docker Image
+      - name: Build and Tag API Docker Image
+        # Cette étape construit l'image avec un tag générique ou directement avec le nom Docker Hub si sur main
         run: |
-          docker build -t house-price-api -f api/Dockerfile .
+          IMAGE_NAME="${{ secrets.DOCKERHUB_USERNAME }}/house_price_prediction"
+          TAG="latest" # Ou utilisez github.sha si vous voulez un tag unique pour chaque commit
+
+          # Construire l'image Docker
+          docker build -t "$IMAGE_NAME:$TAG" -f api/Dockerfile .
+          
+          # Pour les branches de développement, on peut aussi garder un tag local simple si on ne veut pas pousser
+          # docker build -t house-price-api-local -f api/Dockerfile .
+          # Cette approche simplifie le workflow en évitant le retag ultérieur si c'est seulement pour le push.
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -60,17 +65,24 @@ jobs:
         env:
           CI: true
 
-      - name: Deploy to staging (example)
-        if: github.ref == 'refs/heads/develop'
-        run: echo "Déploiement sur l'environnement de staging..."
+      # --- Déploiement et Push Docker Hub (Conditions Spécifiques) ---
 
-      - name: Build and tag Docker image (for production)
+      - name: Login to Docker Hub
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: |
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/house_price_prediction:latest -f api/Dockerfile .
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
       - name: Push Docker image to Docker Hub
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: |
-          echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/house_price_prediction:latest
+          IMAGE_NAME="${{ secrets.DOCKERHUB_USERNAME }}/house_price_prediction"
+          TAG="latest"
+          docker push "$IMAGE_NAME:$TAG"
+
+      - name: Deploy to staging (example)
+        if: github.ref == 'refs/heads/develop'
+        run: echo "Déploiement sur l'environnement de staging..."
+        # Ajoutez ici vos commandes de déploiement pour le staging si vous en avez
+        # Par exemple, connexion à un serveur de staging et exécution de commandes Docker

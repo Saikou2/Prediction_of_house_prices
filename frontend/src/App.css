@@ -1,0 +1,107 @@
+.App {
+  text-align: center;
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  background-color: #f4f7f6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.App-header {
+  background-color: #ffffff;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 800px; /* Largeur maximale pour le formulaire */
+  width: 100%;
+  box-sizing: border-box; /* Inclut le padding dans la largeur */
+}
+
+h1 {
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.prediction-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Deux colonnes pour les champs */
+  gap: 20px; /* Espace entre les champs */
+  margin-top: 20px;
+  text-align: left;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #555;
+}
+
+.form-group input[type="number"],
+.form-group select {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1em;
+  width: 100%; /* S'assurer qu'il prend toute la largeur disponible */
+  box-sizing: border-box;
+}
+
+button {
+  grid-column: span 2; /* Le bouton prend les deux colonnes */
+  padding: 12px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 1.1em;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 20px;
+}
+
+button:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+
+button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.prediction-result {
+  margin-top: 30px;
+  padding: 15px;
+  background-color: #e9f7ef;
+  border: 1px solid #d4edda;
+  border-radius: 5px;
+  color: #155724;
+  font-size: 1.2em;
+}
+
+.error-message {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 5px;
+  color: #721c24;
+  font-size: 1em;
+}
+
+/* Styles pour les écrans plus petits */
+@media (max-width: 600px) {
+  .prediction-form {
+    grid-template-columns: 1fr; /* Une seule colonne sur mobile */
+  }
+  button {
+    grid-column: span 1;
+  }
+}

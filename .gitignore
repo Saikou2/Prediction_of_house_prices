@@ -1,0 +1,6 @@
+env
+frontend/node_modules
+logs/app.log prediction_logs.log/
+data/raw
+
+

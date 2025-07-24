@@ -16,7 +16,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4 
+        uses: actions/checkout@v4
 
       - name: Set up Python 3.12
         uses: actions/setup-python@v5
@@ -44,7 +44,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18' 
+          node-version: '18'
 
       - name: Install frontend dependencies
         run: |
@@ -56,7 +56,7 @@ jobs:
           cd frontend
           npm run build
         env:
-          CI: true 
+          CI: true
 
       - name: Deploy to staging (example)
         if: github.ref == 'refs/heads/develop'
@@ -65,7 +65,7 @@ jobs:
       - name: Build and tag Docker image (for production)
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: |
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/house_price_prediction:latest -f Dockerfile .
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/house_price_prediction:latest -f api/Dockerfile .
 
       - name: Push Docker image to Docker Hub
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
